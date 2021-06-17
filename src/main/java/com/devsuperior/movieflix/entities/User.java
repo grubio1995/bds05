@@ -14,6 +14,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import org.springframework.security.core.GrantedAuthority;
@@ -36,14 +37,17 @@ public class User implements UserDetails, Serializable {
 	@JoinTable(name = "tb_user_role", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))
 	private Set<Role> roles = new HashSet<>();
 
+	@OneToMany(mappedBy = "user")
+	private Set<Review> reviews = new HashSet<>();
+
 	public User() {
 	}
 
-	public User(Long id, String name, String email, String paswword) {
+	public User(Long id, String name, String email, String password) {
 		this.id = id;
 		this.name = name;
 		this.email = email;
-		this.password = paswword;
+		this.password = password;
 	}
 
 	public Long getId() {
@@ -80,6 +84,10 @@ public class User implements UserDetails, Serializable {
 
 	public Set<Role> getRoles() {
 		return roles;
+	}
+
+	public Set<Review> getReviews() {
+		return reviews;
 	}
 
 	@Override
@@ -136,7 +144,7 @@ public class User implements UserDetails, Serializable {
 	public boolean isEnabled() {
 		return true;
 	}
-	
+
 	public boolean hasRole(String roleName) {
 		for (Role role : roles) {
 			if (role.getAuthority().equals(roleName)) {
